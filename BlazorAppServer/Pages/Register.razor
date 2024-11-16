@@ -1,0 +1,54 @@
+﻿@page "/register"
+@using BlazorAppServer.Contacts
+@using BlazorAppServer.Models
+@inject IUserService UserService // Remove the underscore
+@inject ILogger<Login> Logger // Remove the underscore
+@inject NavigationManager Navigation
+
+<h3>Register</h3>
+
+<EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Username">Username</label>
+        <InputText id="Username" class="form-control" @bind-Value="registerModel.Username" />
+    </div>
+
+    <div class="form-group">
+        <label for="Password">Password</label>
+        <InputText id="Password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    private RegisterModel registerModel = new RegisterModel();
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+                var result = await UserService.CreateAsync(registerModel.Username, registerModel.Password);
+                if (result)
+                {
+                    Navigation.NavigateTo("/login"); // Redirect after successful registration
+                }
+                else
+                {
+                    // Handle registration failure (e.g., show an error message)
+                }
+       
+        }
+        catch (Exception ex)
+        {
+            // Log the exception or show an error message
+            Console.WriteLine("Error during registration: " + ex.Message);
+        }
+    }
+
+
+    
+}
